@@ -4,6 +4,11 @@ from authors.models import Author
 from django.utils.text import slugify
 import uuid
 
+import qrcode #pip install qrcode
+from io import BytesIO
+from django.core.files import File
+from PIL import Image
+
 # Create your models here.
 class BookTitle(models.Model):
     title = models.CharField(max_length=200, unique=True)
@@ -34,4 +39,15 @@ class Book(models.Model):
     def save(self, *args, ** kwargs):
         if not self.book_id:
             self.book_id = str(uuid.uuid4()).replace('-','')[:24].lower
+
+            # generate qr code
+            qrcode_img = qrcode.make(self.book_id)
+            canvas = Image.new('RGB', (qrcode_img.pixel_size, qrcode_img.pixel_size), 'white')
+            canvas.paste(qrcode_img)
+            fname = f'qr_code-{self.title}.png'
+            buffer = BytesIO()
+            canvas.save(buffer, 'PNG')
+            self.qr_code.save(fname, File(buffer), save=False)
+            canvas.close()
+
         super().save(*args, **kwargs)
