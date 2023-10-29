@@ -18,6 +18,13 @@ class BookTitle(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
+    @property
+    def books(self):
+        return self.book_set.all() #related name books
+
+    def get_books(self):
+        return self.books.all() #related name books
+
     def __str__(self):
         return f"Book position: {self.title}"
     
