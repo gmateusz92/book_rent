@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'publishers',
     'rentals',
     'django_countries', # pip install djang ocountries
+    'import_export' #pip install django impoert_export 
 ]
 
 MIDDLEWARE = [

@@ -44,6 +44,12 @@ class Book(models.Model):
     def __str__(self):
         return str(self.title)
     
+    @property
+    def status(self):
+        if len(self.rental_set.all()) > 0:
+            return self.rental_set.first()
+        return False
+
     def save(self, *args, ** kwargs):
         if not self.isbn:
             self.isbn= str(uuid.uuid4()).replace('-','')[:24].lower()
