@@ -8,6 +8,7 @@ import qrcode #pip install qrcode
 from io import BytesIO
 from django.core.files import File
 from PIL import Image
+from django.urls import reverse
 
 # Create your models here.
 class BookTitle(models.Model):
@@ -22,8 +23,8 @@ class BookTitle(models.Model):
     def books(self):
         return self.book_set.all() #related name books
 
-    def get_books(self):
-        return self.books.all() #related name books
+    def get_absolute_url(self):
+        return reverse("books:detail", kwargs={"pk": self.pk})
 
     def __str__(self):
         return f"Book position: {self.title}"
