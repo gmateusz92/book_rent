@@ -2,13 +2,7 @@ from django.db import models
 from books.models import Book
 from customers.models import Customer
 from datetime import timedelta
-
-STATUS_CHOICES = (
-    ('#0', 'rented'),
-    ('#0', 'returned'),
-    ('#', 'lost'),
-    ('3', 'delayed'),
-)
+from .choices import STATUS_CHOICES
 
 class Rental(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)

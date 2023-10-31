@@ -44,10 +44,22 @@ INSTALLED_APPS = [
     'publishers',
     'rentals',
     'django_countries', # pip install djang ocountries
-    'import_export' #pip install django impoert_export 
+    'import_export', #pip install django impoert_export 
+    'tailwind',
+    'theme', # to jest do tailwind
+    'django_browser_reload', #tailwind
 ]
 
+TAILWIND_APP_NAME = 'theme' #tailwind
+
+INTERNAL_IPS = [ #tailwind
+    "127.0.0.1",
+]
+
+NPM_BIN_PATH = "C:\\Program Files\\nodejs\\npm.cmd"
+
 MIDDLEWARE = [
+    'django_browser_reload.middleware.BrowserReloadMiddleware', #tailwind
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

@@ -15,4 +15,4 @@ def home_view(request):
         'obj': obj,
     }
     
-    return render(request, 'main.html', context)
+    return render(request, 'books/main.html', context)

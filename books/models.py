@@ -9,6 +9,8 @@ from io import BytesIO
 from django.core.files import File
 from PIL import Image
 from django.urls import reverse
+from rentals.choices import STATUS_CHOICES
+
 
 # Create your models here.
 class BookTitle(models.Model):
@@ -47,7 +49,8 @@ class Book(models.Model):
     @property
     def status(self):
         if len(self.rental_set.all()) > 0:
-            return self.rental_set.first()
+            statuses = dict(STATUS_CHOICES)
+            return statuses[self.rental_set.first().status]
         return False
 
     def save(self, *args, ** kwargs):
