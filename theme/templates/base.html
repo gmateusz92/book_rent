@@ -1,6 +1,6 @@
 {% load static tailwind_tags %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="{% if request.session.is_dark_mode %}dark{% endif %}">
 	<head>
     <title>Django Tailwind | {% block title %}{% endblock title %}</title>
 		<meta charset="UTF-8">
@@ -9,10 +9,12 @@
 		{% tailwind_css %}
 	</head>
 
-	<body class="bg-green-50 font-serif dark:bg-slate-800 dark:text-while">
+	<body class="bg-gray-500 font-serif dark:bg-red-500 dark:text-while">
 		<div class="grid grid-cols-12">
 			<div class="col-span-12">
-				<div class="pt-20 px-6 bg-red-400">
+				<div class="pt-20 px-6">
+				<a href="{% url 'change' %}">tod mode</a>	
+				<hr>
 				{% block content %}
 				{% endblock content %}
 				</div>
