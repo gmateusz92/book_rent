@@ -4,12 +4,19 @@
 
 {% block content %}
 <h1> book title list</h1>
-gggggggggg
+
+<form action="" method="POST">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="p-3 bg-blue-500 text-white">SEND</button>
+</form>
+
+
 {% if qs %}
   {% for el in qs %}
      <li><a href="{{ el.get_absolute_url }}">{{el.title}}</a></li>
   {% endfor %}
 {% endif %}  
 
-gggg
+
 {% endblock content %}
