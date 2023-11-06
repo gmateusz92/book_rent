@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render
 from .models import BookTitle
 # Create your views here.
@@ -24,6 +25,10 @@ class BookTitleListView(FormView, ListView):
     def form_valid(self, form):   
         form.save() 
         return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        self.object_list = self.get_queryset()
+        return super().form_invalid(form)
 
         
 # def book_title_list_view(request):

@@ -1,28 +1,31 @@
 from django import forms 
 from .models import BookTitle
 from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError
 
 class BookTitleForm(forms.ModelForm):
     class Meta:
         model = BookTitle
         fields = ('publisher', 'author', 'title')
         # widgets = {
-        #     'title': forms.TextInput(attrs={'class': 'border bg-purple-200 rounded-xl p-3'}),
-        #     'author': forms.Select(attrs={'class': 'border bg-purple-200 rounded-xl p-3'}),
-        #     'publisher': forms.Select(attrs={'class': 'border bg-purple-200 rounded-xl p-3'})
-        # }
+        #      'title': forms.TextInput(attrs={'class': 'border bg-purple-700 rounded-xl p-3'}),
+        #      'author': forms.Select(attrs={'class': 'border bg-purple-200 rounded-xl p-3'}),
+        #      'publisher': forms.Select(attrs={'class': 'border bg-purple-200 rounded-xl p-3'})
+        #  }
 
     def clean(self):
         title = self.cleaned_data.get('title')
 
         if len(title) < 5:
+            error_msg = 'The title is too short'
+            self.add_error('title', error_msg)
+            #raise ValidationError(error_msg)
             
-            self.add_error('title', 'the title is too short')
-            # raise ValidationError(error_msg)
+            
         
-    #     book_tile_exists = BookTitle.objects.filter(title__iexact=title).exists()
+        book_title_exists = BookTitle.objects.filter(title__iexact=title).exists()
 
-    #     if book_tile_exists:
-    #         self.add_error('title', 'this book title already exists')
-
-    #     return self.cleaned_data
+        if book_title_exists:
+             self.add_error('title', 'this book title already exists')
+        return self.cleaned_data
+       
