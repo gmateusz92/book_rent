@@ -4,7 +4,25 @@
 
 {% block content %}
   <h1> book title list</h1>
-  <div class="border bg-purple-700 rounded-xl p-3 h-10 w-10"></div>
+
+<!-- {% if form.non_field_errors %}
+  {% for error in form.non_field_errors %}
+      <div class="font-bold text-xl text-red-400">{{ error }}</div>
+  {% endfor %}
+{% endif %} -->
+
+  {% if messages %}
+    {% for message in messages %}
+        {% if 'info' in message.tags %}
+            {% include 'components/alert.html' with is_info=True title="Success" body=message %}
+        {% elif 'error' in message.tags %}
+            {% include 'components/alert.html' with is_info=False title="Error" body=message %}
+        {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {% include 'components/header.html' with title="Book titles" description="List of book titles" %}
+
   <form action="" method="POST">
     {% csrf_token %}
     
