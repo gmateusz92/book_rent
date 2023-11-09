@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load widget_tweaks %}
+
+{% block scripts %}
+  <script src="{% static 'books/main.js' %}" defer></script>
+{% endblock scripts%}
+
 {% block title %} book title list {% endblock title %}
 
 {% block content %}
@@ -22,6 +28,12 @@
   {% endif %}
 
   {% include 'components/header.html' with title="Book titles" description="List of book titles" %}
+
+  {% for letter in letters %}
+  <a href="{% url 'books:main' letter|lower %}" class="{% if letter == selected_letter|upper %}underline{% endif %}">{{ letter }}</a>
+  {% endfor %}
+
+  {{ hi }}
 
   <form action="" method="POST">
     {% csrf_token %}
@@ -49,9 +61,13 @@
 
 
   {% if qs %}
-    {% for el in qs %}
-      <li><a href="{{ el.get_absolute_url }}">{{el.title}}</a></li>
-    {% endfor %}
+    <ul>
+      {% for el in qs %}
+        <li><a href="{{ el.get_absolute_url }}">{{el.title}}</a></li>
+      {% endfor %}
+    </ul>
+  {% else %}  
+    no book titles staring with <b>{{selected_letter}}</b>
   {% endif %}  
 
 

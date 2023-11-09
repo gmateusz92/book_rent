@@ -1,3 +1,4 @@
+from typing import Any
 from django.http import HttpResponse
 from django.shortcuts import render
 from .models import BookTitle
@@ -6,12 +7,13 @@ from django.views.generic import ListView, FormView
 from .forms import BookTitleForm
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
+import string
 
-class BookTitleListView(FormView, ListView):
+class BookTitleListView(FormView, ListView): #zrob to kiedys dla treningu w zwyklych views
     #model = BookTitle
-    queryset = BookTitle.objects.all()
+    #queryset = BookTitle.objects.all()
     template_name = 'books/main.html'
-    context_object_name = 'qs'
+    context_object_name = 'qs' #zwraca get_queryset
     form_class = BookTitleForm
     #success_url = reverse_lazy('books:main')
     #ordering = ('created',)
@@ -21,9 +23,16 @@ class BookTitleListView(FormView, ListView):
         return self.request.path #zwraca sciezke na ktorej obecnie znajduje sie uzytkownik
 
     def get_queryset(self):
-        parameter = 's'
+        parameter = self.kwargs.get('letter') if self.kwargs.get('letter') else 'a'
         return BookTitle.objects.filter(title__startswith=parameter)
     
+    def get_context_data(self, **kwargs): #umożliwia dodawanie dodatkowych danych do kontekstu
+        context = super().get_context_data(**kwargs)
+        letters = list(string.ascii_uppercase)
+        context['letters'] = letters #przekazanie do kontekstu
+        context['selected_letter'] = self.kwargs.get('letter') if self.kwargs.get('letter') else 'a'
+        return context
+
     def form_valid(self, form):   
         self.i_instance = form.save()
         messages.add_message(self.request, messages.INFO, f"Book title: {self.i_instance.title} has been created") 
