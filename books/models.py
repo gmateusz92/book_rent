@@ -25,8 +25,9 @@ class BookTitle(models.Model):
     def books(self):
         return self.book_set.all() #related name books
 
-    # def get_absolute_url(self):
-    #     return reverse("books:detail", kwargs={"pk": self.pk})
+    def get_absolute_url(self):
+        letter = self.title[:1].lower()
+        return reverse("books:detail", kwargs={"letter": letter, "slug": self.slug})
 
     def __str__(self):
         return f"Book position: {self.title}"
@@ -42,6 +43,14 @@ class Book(models.Model):
     qr_code = models.ImageField(upload_to='qr_codes', blank=True, null=True)
     cerated_at = models.DateField(auto_now_add=True)
     upadated = models.DateTimeField(auto_now=True)
+
+    def get_absolute_url(self):
+        letter = self.title.title[:1].lower()
+        return reverse("books:detail-book", kwargs={"letter": letter, "slug": self.title.slug, "book_id": self.id})
+    
+    def delete_object(self):
+        letter = self.title.title[:1].lower()
+        return reverse('books:delete-book', kwargs={'letter':letter, 'slug': self.title.slug, "book_id": self.isbn})
 
     def __str__(self):
         return str(self.title)

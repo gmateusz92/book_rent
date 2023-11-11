@@ -1,9 +1,9 @@
 from typing import Any
 from django.http import HttpResponse
-from django.shortcuts import render
-from .models import BookTitle
+from django.shortcuts import render, get_object_or_404
+from .models import BookTitle, Book
 # Create your views here.
-from django.views.generic import ListView, FormView
+from django.views.generic import ListView, FormView, DetailView, DeleteView
 from .forms import BookTitleForm
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
@@ -52,13 +52,58 @@ class BookTitleListView(FormView, ListView): #zrob to kiedys dla treningu w zwyk
 #     return render(request, 'books/main.html', context)
 
 
+# def book_title_detail_view(request, **kwargs):
+#     slug = kwargs.get('slug')
+#     obj = BookTitle.objects.get(slug=slug)
+#     return render(request, 'books/detail.html', {'obj': obj})
 
 
-# from django.views.generic import ListView, FormView
-# from .models import BookTitle
-# from .forms import BookTitleForm
-# from django.urls import reverse_lazy
-# from django.contrib import messages
+#OPTION 1 - BOOK LIST VIEW + overriding get_queryset method
+# class BookListView(ListView):
+#     template_name = 'books/detail.html'
+#     paginate_by = 2
+
+#     def get_queryset(self):
+#         title_slug = self.kwargs.get('slug')
+#         return Book.objects.filter(title__slug=title_slug) #  dlatego ze foreign key
+
+
+# OPTION 2 - BOOK TITLE DETAIL VIEW + model method
+class BookTitleDetailView(DetailView):
+    model = BookTitle
+    template_name = 'books/detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['previous_page'] = reverse('books:main')
+        return context
+
+
+class BookDetailView(DetailView):
+    model = Book
+    template_name = 'books/detail_book.html'
+
+    def get_object(self):
+        id = self.kwargs.get('book_id')
+        #obj = Book.objects.get(isbn=id)
+        obj = get_object_or_404(Book, id=id)
+        return obj
+    
+class BookDeleteView(DeleteView):
+    model = Book
+    template_name = 'books/confirm_delete.html'
+
+    def get_object(self):
+        isbn = self.kwargs.get('book_id')
+        #obj = Book.objects.get(isbn=id)
+        obj = get_object_or_404(Book, isbn=isbn)
+        return obj    
+    
+    def get_success_url(self):
+        messages.add_message(self.request, messages.INFO, f"The book with isbn {self.get_object().isbn} has been deleted")
+        letter = self.kwargs.get('letter')
+        slug = self.kwargs.get('slug')
+        return reverse('books:detail', kwargs={'letter': letter, 'slug': slug})
 
 # class BookTitleListView(ListView, FormView):
 #     model = BookTitle
