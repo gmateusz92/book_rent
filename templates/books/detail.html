@@ -64,13 +64,17 @@
                 {{ obj.status}}
             </td>
             <td class="py-4 px-6">
-                
+                {% if obj.is_available %}
+                    <i class="fa-solid fa-check text-green-500"></i>
+                {% else %}
+                    <i clss="fa-solid fa-xmark text-red-500"></i>
+                {% endif %}
             </td>
             <td class="py-4 px-6">
-                <a href="{{ obj.get_absolute_url }}"> click here </a>
+                {% include 'components/buttons/select_button.html' with href=obj.get_absolute_url  %}
             </td>
             <td class="py-4 px-6">
-                    <a href="{{ obj.delete_object }}"> delete</a>
+                {% include 'components/buttons/delete_button.html' with href=obj.delete_object  %}
             </td>
         </tr>
         {% endfor %}
