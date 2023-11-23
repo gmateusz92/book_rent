@@ -1,6 +1,6 @@
 STATUS_CHOICES = (
     ('#0', 'rented'),
-    ('#0', 'returned'),
-    ('#', 'lost'),
-    ('3', 'delayed'),
+    ('#1', 'returned'),
+    ('#2', 'lost'),
+    ('#3', 'delayed'),
 )
