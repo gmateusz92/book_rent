@@ -8,8 +8,9 @@ from .forms import BookTitleForm
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 import string
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-class BookTitleListView(FormView, ListView): #zrob to kiedys dla treningu w zwyklych views
+class BookTitleListView(LoginRequiredMixin,FormView, ListView): #zrob to kiedys dla treningu w zwyklych views
     #model = BookTitle
     #queryset = BookTitle.objects.all()
     template_name = 'books/main.html'
@@ -69,7 +70,7 @@ class BookTitleListView(FormView, ListView): #zrob to kiedys dla treningu w zwyk
 
 
 # OPTION 2 - BOOK TITLE DETAIL VIEW + model method
-class BookTitleDetailView(DetailView):
+class BookTitleDetailView(LoginRequiredMixin, DetailView):
     model = BookTitle
     template_name = 'books/detail.html'
 
@@ -79,7 +80,7 @@ class BookTitleDetailView(DetailView):
         return context
 
 
-class BookDetailView(DetailView):
+class BookDetailView(LoginRequiredMixin, DetailView):
     model = Book
     template_name = 'books/detail_book.html'
 
@@ -89,7 +90,7 @@ class BookDetailView(DetailView):
         obj = get_object_or_404(Book, id=id)
         return obj
     
-class BookDeleteView(DeleteView):
+class BookDeleteView(LoginRequiredMixin, DeleteView):
     model = Book
     template_name = 'books/confirm_delete.html'
 

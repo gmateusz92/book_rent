@@ -22,8 +22,9 @@ from .views import home_view, change_theme
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home_view, name='home'),
-    path('switcdsdddddddhh/', change_theme, name='change'),
+    path('switch/', change_theme, name='change'),
     path('books/', include('books.urls', namespace='books')),
+    path('rentals/', include('rentals.urls', namespace='rentals')),
     path("__reload__/", include("django_browser_reload.urls")),
 ]
 
