@@ -10,6 +10,7 @@ from django.core.files import File
 from PIL import Image
 from django.urls import reverse
 from rentals.choices import STATUS_CHOICES
+from .utils import hash_book_info
 
 
 # Create your models here.
@@ -38,11 +39,14 @@ class BookTitle(models.Model):
         super().save(*args, **kwargs)
 
 class Book(models.Model):
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4, editable=False)
     title = models.ForeignKey(BookTitle, on_delete=models.CASCADE)
     isbn = models.CharField(max_length=24, blank=True) # isbn zamiast book_id
     qr_code = models.ImageField(upload_to='qr_codes', blank=True, null=True)
     cerated_at = models.DateField(auto_now_add=True)
     upadated = models.DateTimeField(auto_now=True)
+
+   
 
     def get_absolute_url(self):
         letter = self.title.title[:1].lower()
@@ -72,7 +76,8 @@ class Book(models.Model):
 
     def save(self, *args, ** kwargs):
         if not self.isbn:
-            self.isbn= str(uuid.uuid4()).replace('-','')[:24].lower()
+            # self.isbn = str(uuid.uuid4()).replace('-', '')[:24].lower()
+            self.isbn = hash_book_info(self.title.title, self.title.publisher.name) # to jest w utils
 
             # generate qr code
             qrcode_img = qrcode.make(self.isbn)

@@ -46,5 +46,5 @@ class BookRentalHistoryView(LoginRequiredMixin, ListView):
         obj = None
         if qs.exists():
             obj = qs.first()
-        context['obj'] = obj
+        context['object'] = obj
         return context    
