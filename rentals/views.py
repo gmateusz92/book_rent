@@ -1,4 +1,5 @@
 from django.shortcuts import render,redirect, get_object_or_404
+from django.urls import reverse
 from .forms import SearchBookForm
 from books.models import Book
 from django.views.generic import ListView, UpdateView, CreateView, FormView
@@ -53,6 +54,9 @@ class BookRentalHistoryView(LoginRequiredMixin, ListView):
 class UpdateRentalStatusView(LoginRequiredMixin, UpdateView):
     model = Rental
     template_name = 'rentals/update.html'
-    fields=('status',)
+    fields = ("status",)
 
+    def get_success_url(self):
+        book_id = self.kwargs.get('book_id')
+        return reverse('rentals:detail', kwargs={'book_id':book_id})
         
