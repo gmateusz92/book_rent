@@ -1,11 +1,13 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from django.urls import reverse
-from .forms import SearchBookForm
+from .forms import SearchBookForm, SelectExportOptionForm
 from books.models import Book
 from django.views.generic import ListView, UpdateView, CreateView, FormView
 from .models import Rental
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
+from datetime import datetime
+from django.contrib import messages
 
 def search_book_view(request):
     form = SearchBookForm(request.POST or None)
@@ -35,7 +37,7 @@ class BookRentalHistoryView(LoginRequiredMixin, ListView):
         obj = Book.objects.filter(Q(isbn=book_id) | Q(id=book_id)).first()
         #obj = get_object_or_404(Book, Q(isbn=book_id) | Q(id=book_id))
         context['object'] = obj
-        #context['book_id'] = book_id
+        context['book_id'] = book_id
         return context
 
     # def get_queryset(self):
@@ -59,4 +61,47 @@ class UpdateRentalStatusView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         book_id = self.kwargs.get('book_id')
         return reverse('rentals:detail', kwargs={'book_id':book_id})
-        
+
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        if instance.status == '#1':
+            instance.return_date = datetime.today().date()
+            instance.is_closed = True
+        instance.save()
+        messages.add_message(self.request, messages.INFO, f"{instance.book.id} was successfuly updated")
+        return super().form_valid(form)    
+    
+class CreateNewRentalView(LoginRequiredMixin, CreateView):
+    model = Rental
+    template_name = 'rentals/new.html'
+    fields = ('customer',)
+
+    def get_success_url(self):
+        book_id = self.kwargs.get('book_id')
+        return reverse('rentals:detail', kwargs={'book_id':book_id})    
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["book_id"] = self.kwargs.get('book_id')
+        return context
+    
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        book_id = self.kwargs.get('book_id')
+        obj = Book.objects.get(id=book_id)
+        instance.book = obj
+        instance.status = '#0'
+        instance.rent_start_date = datetime.today().date()
+        instance.save()
+        return super().form_valid(form)
+
+
+class SelectDownloadRentalsView(LoginRequiredMixin, FormView):
+    template_name = 'rentals/select_format.html'
+    form_class = SelectExportOptionForm    
+
+    def get_success_url(self):
+        return self.request.path
+    
+    def post(self, request, **kwargs):
+        return
