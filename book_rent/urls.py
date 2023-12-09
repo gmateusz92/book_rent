@@ -17,11 +17,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import home_view, change_theme
+from .views import DashboardView, change_theme, chart_data, login_view, otp_view, logout_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', home_view, name='home'),
+    path('', DashboardView.as_view(), name='home'),
+    path('login/', login_view, name='login'),
+    path('logout/', logout_view, name='logout'),
+    path('otp/', otp_view, name='otp'),
+    path('chart-data', chart_data, name='data'),
     path('switch/', change_theme, name='change'),
     path('books/', include('books.urls', namespace='books')),
     path('rentals/', include('rentals.urls', namespace='rentals')),
