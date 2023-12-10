@@ -16,6 +16,8 @@ from datetime import datetime
 import pyotp
 from django.contrib.auth.models import User
 from django.db.models import Count, Sum
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 
 def logout_view(request):
@@ -26,13 +28,13 @@ def login_view(request):
     form = LoginForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
-            # username = form.cleaned_data.get('username')
-            email = form.cleaned_data.get('email')
+            username = form.cleaned_data.get('username')
+            # email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
-            user = authenticate(request, email=email, password=password)
+            user = authenticate(request, username=username, password=password)
             if user is not None:
                 send_otp(request)
-                request.session['username'] = email
+                request.session['username'] = username
                 print('ok, sending otp')
                 return redirect('otp')
             else:
@@ -60,8 +62,8 @@ def otp_view(request):
                 if valid_until > datetime.now():
                     totp = pyotp.TOTP(otp_secret_key, interval=120)
                     if totp.verify(otp):
-                        # user = get_object_or_404(User, username=username)
-                        user = get_object_or_404(User, email=username)
+                        user = get_object_or_404(User, username=username)
+                        #user = get_object_or_404(User, email=username)
                         login(request, user)
                         del request.session['otp_secret_key']
                         del request.session['otp_valid_date']
@@ -80,7 +82,7 @@ def otp_view(request):
     return render(request, 'otp.html', context)
 
 
-
+@login_required
 def change_theme(request):
     if 'is_dark_mode' in request.session:
         request.session['is_dark_mode'] = not request.session['is_dark_mode']
@@ -88,11 +90,11 @@ def change_theme(request):
         request.session['is_dark_mode'] = True
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-class DashboardView(TemplateView):
+class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'dashboard.html'
 
+@login_required
 def chart_data(request):
-    
     data = []
     # 1) book titles vs books (bar)
     all_books = len(Book.objects.all())

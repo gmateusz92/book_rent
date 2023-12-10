@@ -57,6 +57,8 @@ INTERNAL_IPS = [ #tailwind
     "127.0.0.1",
 ]
 
+LOGIN_URL = '/login'
+
 NPM_BIN_PATH = "C:\\Program Files\\nodejs\\npm.cmd"
 
 MIDDLEWARE = [

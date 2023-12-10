@@ -10,6 +10,7 @@ from django.contrib import messages
 import string
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+
 class BookTitleListView(LoginRequiredMixin,FormView, ListView): #zrob to kiedys dla treningu w zwyklych views
     #model = BookTitle
     #queryset = BookTitle.objects.all()
